@@ -1,0 +1,9 @@
+bin
+include
+lib
+__pycache__
+pyvenv.cfg
+.git
+.gitignore
+.gcloudignore
+deploy

@@ -1,0 +1,2 @@
+gcloud config set project automated-tasks-2
+gcloud functions deploy strava-twitter-bot --entry-point tweet --runtime python39 --trigger-topic strava-twitter --set-env-vars GOOGLE_APPLICATION_CREDENTIALS=secret.json
