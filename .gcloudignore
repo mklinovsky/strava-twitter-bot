@@ -7,3 +7,4 @@ pyvenv.cfg
 .gitignore
 .gcloudignore
 deploy
+tests.py

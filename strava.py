@@ -1,6 +1,7 @@
 import requests
 import datetime
 import store
+import math
 
 stored_access_data = store.get_access_data()
 strava_settings = store.get_strava_settings()
@@ -41,12 +42,37 @@ def get_stats():
     athlete_id = strava_settings['athlete_id']
     return get(f'athletes/{athlete_id}/stats')
 
-def get_stats_message():
-    stats = get_stats()['ytd_run_totals']
-    
+def get_stats_text(stats):
+    time = get_time(stats['elapsed_time'])
+
     distance = f"🏃 {round(stats['distance'] / 1000, 2)} km\n"
-    elevation = f"⛰ {stats['elevation_gain']} m\n"
-    elapsed = f"🕒 {round(stats['elapsed_time'] / 60, 2)} h\n"
+    elevation = f"⛰ {math.floor(stats['elevation_gain'])} m\n"
+    elapsed = f"🕒 {time}\n"
     count = f"🖐 {stats['count']} runs"
 
     return f'{distance}{elevation}{elapsed}{count}'
+
+def get_avg_week_distance(stats):
+    distance = round(stats['distance'] / 1000 / 4, 2)
+    return f'🏃 {distance} km'
+
+def get_time(minutes):
+    if (minutes < 60):
+        return f'{minutes}m'
+
+    if (minutes == 60):
+        return '1h'
+
+    h = minutes // 60
+    m = minutes % 60
+    return f'{h}h {m}m'
+
+def get_stats_message():
+    stats = get_stats()
+    recent_stats = stats['recent_run_totals']
+    
+    recent_stats_text = get_stats_text(recent_stats)
+    ytd_stats_text = get_stats_text(stats['ytd_run_totals'])
+    avg_week_distance = get_avg_week_distance(recent_stats)
+
+    return f'Avg week:\n{avg_week_distance}\n\nLast 4 weeks:\n{recent_stats_text}\n\nThis year:\n{ytd_stats_text}'
